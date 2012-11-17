@@ -42,6 +42,10 @@ class SalesRanking extends SC_Plugin_Base {
                     (10, " . $id3 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW())
             ");
 
+			// salesranking値保存用テーブル作成
+			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint)");
+			$objQuery->query("insert into dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg) values (0, 1, 5, 2, 1, 5, 1)");
+
             // ロゴファイルをhtmlディレクトリにコピーします.
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/logo.png", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/logo.png");
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/SalesRankingPage.php", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/SalesRankingPage.php");
@@ -66,6 +70,8 @@ class SalesRanking extends SC_Plugin_Base {
             }
         
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg", HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
+			
+			
             $objQuery->commit();
 		}
         catch (Exception $e)
@@ -86,9 +92,19 @@ class SalesRanking extends SC_Plugin_Base {
     	
         // dtb_blocから不要なカラムを削除します.
     	$objQuery =& SC_Query_Ex::getSingletonInstance();
+        $objQuery->begin();		
         $objQuery->query("DELETE FROM dtb_blocposition WHERE bloc_id IN (SELECT bloc_id FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId . ")");
         $objQuery->query("DELETE FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId);
-        
+
+		try 
+        {
+			// salesranking値保存用テーブル作成
+			$objQuery->query("DROP TABLE dtb_salesranking");
+		}
+        catch (Exception $e)
+        {
+        }
+		
         unlink(DATA_REALDIR . "Smarty/templates/default/frontparts/bloc/salesranking.tpl");
         unlink(DATA_REALDIR . "Smarty/templates/mobile/frontparts/bloc/salesranking.tpl");
         unlink(DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl");
@@ -101,6 +117,8 @@ class SalesRanking extends SC_Plugin_Base {
         rmdir(HTML_REALDIR . "/user_data/packages/default/img/salesranking");
         rmdir(HTML_REALDIR . "/user_data/packages/sphone/img/salesranking");
         unlink(HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
+		
+        $objQuery->commit();		
     }
     
     /**

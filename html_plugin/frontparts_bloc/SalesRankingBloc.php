@@ -41,7 +41,7 @@ class SalesRankingBloc extends LC_Page_FrontParts_Bloc_Ex {
         $objSiteInfo = SC_Helper_DB_Ex::sfGetBasisData();
         $this->arrInfo = $objSiteInfo->data;
 
-        // 週間売筋ランキングをセット
+		// 週間売筋ランキングをセット
         $this->arrRankingItems = $this->lfGetSalesRanking();
         
     }
@@ -64,10 +64,21 @@ class SalesRankingBloc extends LC_Page_FrontParts_Bloc_Ex {
     function lfGetSalesRanking() {
         $objQuery =& SC_Query_Ex::getSingletonInstance();
         $objProduct = new SC_Product_Ex();
-
-		$interval0 	= date("Y-m-d")							. " 00:00:00";
-		$interval7 	= date("Y-m-d", strtotime("-7 day"))	. " 00:00:00";
-		$interval14 = date("Y-m-d", strtotime("-14 day")) 	. " 00:00:00";
+        $dtbSalesRanking = $objQuery->getAll("SELECT * FROM dtb_salesranking LIMIT 1");        
+		
+		$ci = $_GET["category_id"];
+		
+		$startInterval		= $dtbSalesRanking[0][start_interval];
+		$summaryWeek		= $dtbSalesRanking[0][summary_week];
+		$scoreMarkStatus	= $dtbSalesRanking[0][score_mark_status];
+		$scoreMarkDate		= $dtbSalesRanking[0][score_mark_date] != 1 ? "commit_date" : "payment_date";
+		$scoreMarkPoint		= $dtbSalesRanking[0][score_mark_point] != 1 ? "" : " AND use_point = 0 ";
+		$maxRanking			= $dtbSalesRanking[0][max_ranking];
+		$categoryFlg		= $dtbSalesRanking[0][category_flg] == 1 && !empty($ci) ? " INNER JOIN dtb_product_categories AS DPC ON GR.product_id = DPC.product_id AND DPC.category_id IN ( SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE  parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci ))) UNION SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci )) UNION SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci)" : "" ;
+		
+		$interval0 	= date("Y-m-d", strtotime("-".$startInterval." day"))							. " 00:00:00";
+		$interval7 	= date("Y-m-d", strtotime("-".($summaryWeek * ($startInterval + 7))." day"))	. " 00:00:00";
+		$interval14 = date("Y-m-d", strtotime("-".($summaryWeek * ($startInterval + 14))." day"))	. " 00:00:00";
 		
 		$this->endDate		= $interval0;
 		$this->startDate	= $interval7;
@@ -105,20 +116,22 @@ FROM
 				WHERE
 						DD.del_flg = 0
 					AND
-						DD.status = 5
+						DD.status = $scoreMarkStatus
 					AND
-						DD.commit_date 
+						DD.$scoreMarkDate 
 						BETWEEN 
 							'$interval7' 
 						AND 
 							'$interval0' 
+					$scoreMarkPoint
 			) AS OG
 		GROUP BY 
 			OG.product_id
-		LIMIT 5
+		LIMIT $maxRanking
 	) AS GR
 INNER JOIN 
-	dtb_products AS DP ON GR.product_id = DP.product_id AND DP.del_flg = 0 AND DP.status = 1
+	dtb_products AS DP ON GR.product_id = DP.product_id AND DP.del_flg = 0 AND DP.status = 1 
+$categoryFlg
 INNER JOIN
 	(
 		SELECT 
@@ -165,17 +178,18 @@ FROM
 		WHERE
 				DD.del_flg = 0
 			AND
-				DD.status = 5
+				DD.status = $scoreMarkStatus
 			AND
-				DD.commit_date 
+				DD.$scoreMarkDate 
 				BETWEEN 
 					'$interval14' 
 				AND 
 					'$interval7' 
+			$scoreMarkPoint
 	) AS OG
 GROUP BY 
 	OG.product_id
-LIMIT 5
+LIMIT $maxRanking
 ) GR
 ORDER BY GR.summary DESC
 __EOS__;

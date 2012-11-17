@@ -71,6 +71,11 @@ class plugin_update{
 			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/a/contents/salesranking.tpl", 									DATA_REALDIR . "Smarty/templates/admin/contents/salesranking.tpl");
 			
 			
+			// 追記があればここへ追記
+			// salesranking値保存用テーブル作成
+			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint)");
+			$objQuery->query("insert into dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg) values (0, 1, 5, 2, 1, 5, 1)");
+			
 			
 			$objQuery->commit();
 			

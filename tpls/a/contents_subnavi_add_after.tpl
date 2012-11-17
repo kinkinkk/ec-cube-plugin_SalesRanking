@@ -1,1 +1,1 @@
-<li<!--{if $tpl_subno == 'recommend'}--> class="on"<!--{/if}--> id="navi-contents-salesranking"><a href="<!--{$smarty.const.ROOT_URLPATH}-->plugin/SalesRankingKNZTK/<!--{$smarty.const.ADMIN_DIR}-->contents/SalesRankingSetting.php"><span>売筋ランキング管理</span></a></li>
+<li<!--{if $tpl_subno == 'recommend'}--> class="on"<!--{/if}--> id="navi-contents-salesranking"><a href="<!--{$smarty.const.ROOT_URLPATH}-->plugin/SalesRankingKNZTK/<!--{$smarty.const.ADMIN_DIR}-->contents/SalesRankingSetting.php"><span>週間売筋ランキング管理</span></a></li>
