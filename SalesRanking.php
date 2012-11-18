@@ -43,8 +43,8 @@ class SalesRanking extends SC_Plugin_Base {
             ");
 
 			// salesranking値保存用テーブル作成
-			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint)");
-			$objQuery->query("insert into dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg) values (0, 1, 5, 2, 1, 5, 1)");
+			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint, disp_date_flg smallint)");
+			$objQuery->query("insert into dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg, disp_date_flg) values (0, 1, 5, 1, 1, 5, 1, 1)");
 
             // ロゴファイルをhtmlディレクトリにコピーします.
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/logo.png", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/logo.png");
@@ -99,7 +99,7 @@ class SalesRanking extends SC_Plugin_Base {
 		try 
         {
 			// salesranking値保存用テーブル作成
-			$objQuery->query("DROP TABLE dtb_salesranking");
+			$objQuery->query("DROP TABLE IF EXISTS dtb_salesranking");
 		}
         catch (Exception $e)
         {

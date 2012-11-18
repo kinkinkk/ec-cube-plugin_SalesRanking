@@ -104,7 +104,14 @@
     #topcolumn #salesranking_area .salesrank {
         height: 35px;
     }
-    
+	#topcolumn .target_dates {
+        text-align: right;
+		font-size: 10px;
+	}        
+	#topcolumn .salesrankText {
+        height: 35px;
+		font-size: 20px;
+	}
     /* メインカラム用 */
     .main_column #salesranking_area .block_body {
         background: url('<!--{$TPL_URLPATH}-->img/background/line_dot_01.gif') repeat-x bottom;
@@ -152,8 +159,15 @@
     .main_column #salesranking_area .salesrank {
         
     }
-    
+	.main_column .target_dates {
+        text-align: right;
+		font-size: 10px;
+	}    
 
+	.main_column .salesrankText {
+		font-size: 30px;
+	}
+	
     /* サイドカラム用 */
     .side_column #salesranking_area .block_body {
     }
@@ -193,8 +207,13 @@
         width: 130px;
     }
     
-    
-
+	.side_column .target_dates {
+        text-align: right;
+		font-size: 7px;
+	}
+	.side_column .salesrankText {
+		font-size: 20px;
+	}
     -->  
     </style>  
     <div class="block_outer clearfix">
@@ -205,7 +224,11 @@
                     <div class="salesranking_product_item">
                         <div class="rankingImage">
                             <a href="<!--{$smarty.const.P_DETAIL_URLPATH}--><!--{$arrProduct.product_id|u}-->">
+								<!--{if $smarty.foreach.sales_rankings.iteration < 6}-->
                                 <img class="salesrank" src="<!--{$TPL_URLPATH}-->img/salesranking/rank_<!--{$smarty.foreach.sales_rankings.iteration}-->.jpg" alt="*"   />
+								<!--{else}-->
+								<div class="salesrankText">第<!--{$smarty.foreach.sales_rankings.iteration}-->位</div>
+								<!--{/if}-->
                             </a>
                         </div>
                                 
@@ -231,6 +254,7 @@
                     </div>
                 <!--{/foreach}-->
             </div>
+			<!--{if $isDispDates}--><div class="target_dates">対象期間:<!--{$startDate|date_format:"%Y/%m/%d"}-->〜<!--{$endDate|date_format:"%Y/%m/%d"}--></div><!--{/if}-->
         </div>
     </div>
 <!--{/if}-->

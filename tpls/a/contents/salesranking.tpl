@@ -3,19 +3,10 @@
 function lfnCheckSubmit( fm ){
 
 	if(window.confirm("\u5185容を登録しても宜しいですか")){
-		if (document.getElementById("score_mark_status").value == "5")
-		{
-			document.getElementById("score_mark_date").value = "1"
-		}
-		else
-		{
-			document.getElementById("score_mark_date").value = "2"
-		}
 		fm.submit();
 		return true;
 	}
 }
-
 //-->
 </script>
 
@@ -48,7 +39,7 @@ function lfnCheckSubmit( fm ){
 					<option value="6" <!--{if $arrItem.score_mark_status == 6}-->selected<!--{/if}-->>入金済み</option>
 					<option value="5" <!--{if $arrItem.score_mark_status == 5}-->selected<!--{/if}-->>発送済み</option>
 				</select>より売上げとみなす。
-				<hidden name="score_mark_date" value="<!--{$arrItem.score_mark_date}-->" id="score_mark_date" />
+				<hidden name="score_mark_date" id="score_mark_date" />
 			</td>
 		</tr>
         <tr>
@@ -66,6 +57,13 @@ function lfnCheckSubmit( fm ){
 				</select>まで表示する。
 			</td>
 		</tr>
+        <tr>
+            <th>該当期間の表示</th>
+            <td>
+				<input type="radio" name="disp_date_flg" id="disp_date_flg1" value="1" <!--{if $arrItem.disp_date_flg == 1}-->checked<!--{/if}--> /><label for="disp_date_flg1">表示する</label>
+				<input type="radio" name="disp_date_flg" id="disp_date_flg0" value="0" <!--{if $arrItem.disp_date_flg == 0}-->checked<!--{/if}--> /><label for="disp_date_flg0">表示しない</label>
+			</td>
+		</tr>		
         <tr>
             <th>カテゴリランキング機能</th>
             <td>

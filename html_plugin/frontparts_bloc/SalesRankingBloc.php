@@ -62,20 +62,20 @@ class SalesRankingBloc extends LC_Page_FrontParts_Bloc_Ex {
      * @return array $arrRankingItems 検索結果配列
      */
     function lfGetSalesRanking() {
+		$ci					= $_GET["category_id"];
+		
         $objQuery =& SC_Query_Ex::getSingletonInstance();
-        $objProduct = new SC_Product_Ex();
-        $dtbSalesRanking = $objQuery->getAll("SELECT * FROM dtb_salesranking LIMIT 1");        
+        $objProduct			= new SC_Product_Ex();
+        $dtbSalesRanking	= $objQuery->getRow("*", "dtb_salesranking");		
 		
-		$ci = $_GET["category_id"];
-		
-		$startInterval		= $dtbSalesRanking[0][start_interval];
-		$summaryWeek		= $dtbSalesRanking[0][summary_week];
-		$scoreMarkStatus	= $dtbSalesRanking[0][score_mark_status];
-		$scoreMarkDate		= $dtbSalesRanking[0][score_mark_date] != 1 ? "commit_date" : "payment_date";
-		$scoreMarkPoint		= $dtbSalesRanking[0][score_mark_point] != 1 ? "" : " AND use_point = 0 ";
-		$maxRanking			= $dtbSalesRanking[0][max_ranking];
-		$categoryFlg		= $dtbSalesRanking[0][category_flg] == 1 && !empty($ci) ? " INNER JOIN dtb_product_categories AS DPC ON GR.product_id = DPC.product_id AND DPC.category_id IN ( SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE  parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci ))) UNION SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci )) UNION SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci)" : "" ;
-		
+		$startInterval		= $dtbSalesRanking["start_interval"];
+		$summaryWeek		= $dtbSalesRanking["summary_week"];
+		$scoreMarkStatus	= $dtbSalesRanking["score_mark_status"];
+		$scoreMarkDate		= $dtbSalesRanking["score_mark_date"] == 1 ? "commit_date" : "payment_date";
+		$scoreMarkPoint		= $dtbSalesRanking["score_mark_point"] != 1 ? "" : " AND use_point = 0 ";
+		$maxRanking			= $dtbSalesRanking["max_ranking"];
+		$categoryFlg		= $dtbSalesRanking["category_flg"] == 1 && !empty($ci) ? " INNER JOIN dtb_product_categories AS DPC ON GR.product_id = DPC.product_id AND DPC.category_id IN ( SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE  parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci ))) UNION SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci )) UNION SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci)" : "" ;
+		$this->isDispDates	= $dtbSalesRanking["disp_date_flg"];
 		$interval0 	= date("Y-m-d", strtotime("-".$startInterval." day"))							. " 00:00:00";
 		$interval7 	= date("Y-m-d", strtotime("-".($summaryWeek * ($startInterval + 7))." day"))	. " 00:00:00";
 		$interval14 = date("Y-m-d", strtotime("-".($summaryWeek * ($startInterval + 14))." day"))	. " 00:00:00";

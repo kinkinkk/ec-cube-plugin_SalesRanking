@@ -21,13 +21,11 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
      */
     function init() {
         parent::init();
-        $this->tpl_mainpage = 'contents/salesranking.tpl';
-        $this->tpl_mainno = 'contents';
-        $this->tpl_subno = 'salesranking';
-        $this->tpl_maintitle = 'コンテンツ管理';
-        $this->tpl_subtitle = '週間売筋ランキング管理';
-        //最大登録数の表示
-        $this->tpl_disp_max = RECOMMEND_NUM;
+        $this->tpl_mainpage		= 'contents/salesranking.tpl';
+        $this->tpl_mainno		= 'contents';
+        $this->tpl_subno		= 'salesranking';
+        $this->tpl_maintitle	= 'コンテンツ管理';
+        $this->tpl_subtitle		= '週間売筋ランキング管理';
     }
 
     /**
@@ -58,6 +56,7 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
 			$objFormParam->addParam('スコア基準P',		'score_mark_point',		INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
 			$objFormParam->addParam('ランキング最大',	'max_ranking',			INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
 			$objFormParam->addParam('カテゴリ',			'category_flg',			INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
+			$objFormParam->addParam('期間表示',			'disp_date_flg',		INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
 			
 			$objFormParam->setParam($_POST);
 			$objFormParam->convParam();
@@ -123,10 +122,11 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
         $sqlval['start_interval']		= $arrPost['start_interval'];
         $sqlval['summary_week']			= $arrPost['summary_week'];
         $sqlval['score_mark_status']	= $arrPost['score_mark_status'];
-        $sqlval['score_mark_date']		= $arrPost['score_mark_date'];
+        $sqlval['score_mark_date']		= $arrPost['score_mark_status'] == 5 ? 1 : 0;
         $sqlval['score_mark_point']		= $arrPost['score_mark_point'];
         $sqlval['max_ranking']			= $arrPost['max_ranking'];
         $sqlval['category_flg']			= $arrPost['category_flg'];
+        $sqlval['disp_date_flg']		= $arrPost['disp_date_flg'];
 		
 		try
 		{

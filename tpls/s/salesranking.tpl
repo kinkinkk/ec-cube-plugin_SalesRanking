@@ -64,6 +64,16 @@
             -1px  1px 0 #F00,
              1px  1px 0 #F00;          
     }
+	
+	#salesranking_area .target_dates {
+        text-align: right;
+		font-size: 8px;	
+	}
+	#salesranking_area .salesrankText {
+		font-size: 17px;	        
+		float: left;
+	}
+	
     -->  
     </style>  
     <div id="salesranking_area">
@@ -72,7 +82,11 @@
             <!--{foreach from=$arrRankingItems item="arrProduct" name="sales_rankings"}-->
                 <li id="salesranking_mainImage<!--{$smarty.foreach.sales_rankings.iteration}-->">
                     <div class="salesranking_block clearfix">
+						<!--{if $smarty.foreach.sales_rankings.iteration < 6}-->
                         <img class="salesrank" src="<!--{$TPL_URLPATH}-->img/salesranking/rank_<!--{$smarty.foreach.sales_rankings.iteration}-->.jpg" alt="*"   />
+						<!--{else}-->
+						<div class="salesrankText">第<!--{$smarty.foreach.sales_rankings.iteration}-->位　</div>
+						<!--{/if}-->
                         <div class="beforeRank">
                         (前回<!--{$arrProduct.before_rank}-->位)
                         </div>
@@ -89,6 +103,7 @@
                 </li>
             <!--{/foreach}-->
         </ul>
+		<!--{if $isDispDates}--><div class="target_dates">対象期間:<!--{$startDate|date_format:"%Y/%m/%d"}-->〜<!--{$endDate|date_format:"%Y/%m/%d"}--></div><!--{/if}-->
     </div>
 <!--{/if}-->
 <!-- ▲おすすめ商品 -->

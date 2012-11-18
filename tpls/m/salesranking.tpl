@@ -11,7 +11,7 @@
             <br>
 
         <!--{/foreach}-->
-
+		<!--{if $isDispDates}-->対象期間:<br />　<!--{$startDate|date_format:"%Y/%m/%d"}-->〜<br />　<!--{$endDate|date_format:"%Y/%m/%d"}--></div><!--{/if}-->
         <hr>
 
     <!--{/if}-->
