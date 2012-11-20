@@ -72,7 +72,7 @@ class SalesRankingBloc extends LC_Page_FrontParts_Bloc_Ex {
 		$summaryWeek		= $dtbSalesRanking["summary_week"];
 		$scoreMarkStatus	= $dtbSalesRanking["score_mark_status"];
 		$scoreMarkDate		= $dtbSalesRanking["score_mark_date"] == 1 ? "commit_date" : "payment_date";
-		$scoreMarkPoint		= $dtbSalesRanking["score_mark_point"] != 1 ? "" : " AND use_point = 0 ";
+		$scoreMarkPoint		= $dtbSalesRanking["score_mark_point"] == 1 ? "" : " AND DD.use_point = 0 ";
 		$maxRanking			= $dtbSalesRanking["max_ranking"];
 		$categoryFlg		= $dtbSalesRanking["category_flg"] == 1 && !empty($ci) ? " INNER JOIN dtb_product_categories AS DPC ON GR.product_id = DPC.product_id AND DPC.category_id IN ( SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE  parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci ))) UNION SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id IN (SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci )) UNION SELECT category_id FROM dtb_category WHERE parent_category_id = $ci OR category_id = $ci)" : "" ;
 		$this->isDispDates	= $dtbSalesRanking["disp_date_flg"];
@@ -127,7 +127,6 @@ FROM
 			) AS OG
 		GROUP BY 
 			OG.product_id
-		LIMIT $maxRanking
 	) AS GR
 INNER JOIN 
 	dtb_products AS DP ON GR.product_id = DP.product_id AND DP.del_flg = 0 AND DP.status = 1 
@@ -150,11 +149,11 @@ INNER JOIN
 	ON
 		PR.product_id = GR.product_id
 ORDER BY GR.summary DESC
+LIMIT $maxRanking
 __EOS__;
         
         $arrRankingItems = $objQuery->getAll($str);
-        
-        $objProduct->setIncTaxToProducts($arrRankingItems);
+		$objProduct->setIncTaxToProducts($arrRankingItems);
         
         
         // ２週間前のランキング取得
@@ -189,9 +188,9 @@ FROM
 	) AS OG
 GROUP BY 
 	OG.product_id
-LIMIT $maxRanking
 ) GR
 ORDER BY GR.summary DESC
+LIMIT $maxRanking
 __EOS__;
         
         $arrRankingItems2 = $objQuery->getAll($str2);        
