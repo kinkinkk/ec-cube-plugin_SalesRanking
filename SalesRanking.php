@@ -4,7 +4,7 @@
  */
 class SalesRanking extends SC_Plugin_Base {
 
-	const QUERY_SELECT_PLUGIN_ID_BASE = "(SELECT plugin_id FROM dtb_plugin WHERE plugin_code='?' LIMIT 1)";
+	//const QUERY_SELECT_PLUGIN_ID_BASE = "(SELECT plugin_id FROM dtb_plugin WHERE plugin_code='?' LIMIT 1)";
 
     /**
      * コンストラクタ
@@ -22,7 +22,7 @@ class SalesRanking extends SC_Plugin_Base {
      * @return void
      */
     function install($arrPlugin) {
-    	$queSelPluginId = str_replace("?", $arrPlugin['plugin_code'], self::QUERY_SELECT_PLUGIN_ID_BASE);
+    	$queSelPluginId = $arrPlugin['plugin_id'];
     	$queStrDir = "plugin/" . $arrPlugin['plugin_code'] . "/";
     	// dtb_blocに必要なカラムを追加します.
         $objQuery =& SC_Query_Ex::getSingletonInstance();
@@ -77,7 +77,8 @@ class SalesRanking extends SC_Plugin_Base {
         catch (Exception $e)
         {
             $objQuery->rollback();
-            uninstall($arrPlugin);
+			$objQuery->query("UPDATE dtb_plugin SET plugin_description = 'エラーが発生した為、不完全な状態です。削除（アンインストール）してください！' WHERE plugin_id=" . $queSelPluginId);
+			throw $e;
         }
         
     }
@@ -88,22 +89,18 @@ class SalesRanking extends SC_Plugin_Base {
      * @return void
      */
     function uninstall($arrPlugin) {
-    	$queSelPluginId = str_replace("?", $arrPlugin['plugin_code'], self::QUERY_SELECT_PLUGIN_ID_BASE);
+    	$queSelPluginId = $arrPlugin['plugin_id'];
     	
         // dtb_blocから不要なカラムを削除します.
     	$objQuery =& SC_Query_Ex::getSingletonInstance();
         $objQuery->begin();		
-        $objQuery->query("DELETE FROM dtb_blocposition WHERE bloc_id IN (SELECT bloc_id FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId . ")");
-        $objQuery->query("DELETE FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId);
 
-		try 
-        {
-			// salesranking値保存用テーブル作成
-			$objQuery->query("DROP TABLE IF EXISTS dtb_salesranking");
-		}
-        catch (Exception $e)
-        {
-        }
+		// salesranking値保存用テーブル削除
+		$objQuery->query("DELETE FROM dtb_blocposition WHERE bloc_id IN (SELECT bloc_id FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId . ")");
+		$objQuery->query("DELETE FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId);
+		$objQuery->query("DROP TABLE IF EXISTS dtb_salesranking");
+        $objQuery->commit();
+
 		
         unlink(DATA_REALDIR . "Smarty/templates/default/frontparts/bloc/salesranking.tpl");
         unlink(DATA_REALDIR . "Smarty/templates/mobile/frontparts/bloc/salesranking.tpl");
@@ -118,7 +115,6 @@ class SalesRanking extends SC_Plugin_Base {
         rmdir(HTML_REALDIR . "/user_data/packages/sphone/img/salesranking");
         unlink(HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
 		
-        $objQuery->commit();		
     }
     
     /**
@@ -127,7 +123,7 @@ class SalesRanking extends SC_Plugin_Base {
      * @return void
      */
     function enable($arrPlugin) {
-    	$queSelPluginId = str_replace("?", $arrPlugin['plugin_code'], self::QUERY_SELECT_PLUGIN_ID_BASE);
+    	$queSelPluginId = $arrPlugin['plugin_id'];
 
         // dtb_blocから不要なカラムを削除します.
     	$objQuery =& SC_Query_Ex::getSingletonInstance();
@@ -140,7 +136,7 @@ class SalesRanking extends SC_Plugin_Base {
      * @return void
      */
     function disable($arrPlugin) {
-    	$queSelPluginId = str_replace("?", $arrPlugin['plugin_code'], self::QUERY_SELECT_PLUGIN_ID_BASE);
+    	$queSelPluginId = $arrPlugin['plugin_id'];
 
         // dtb_blocから不要なカラムを削除します.
         $objQuery =& SC_Query_Ex::getSingletonInstance();

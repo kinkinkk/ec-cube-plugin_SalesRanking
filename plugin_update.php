@@ -19,11 +19,16 @@ class plugin_update{
         // バージョン1.0.1からのアップデート
         if($arrPlugin['plugin_version'] == "v1.0.1"){
            plugin_update::update101($arrPlugin);
+           plugin_update::update110($arrPlugin);
+        }
+        // バージョン1.1.0からのアップデート
+        elseif ($arrPlugin['plugin_version'] == "v1.1.0") {
+           plugin_update::update110($arrPlugin);
         }
     }
     
     /**
-     * 1.0.1のアップデートを実行します.
+     * 1.0.1からのアップデートを実行します.
      * @param type $param 
      */
     function update101($arrPlugin) {
@@ -87,7 +92,28 @@ class plugin_update{
             $objQuery->rollback();
         }
     }
-    
+
+    /**
+     * 1.1.0からのアップデートを実行します.
+     * @param type $param 
+     */
+    function update110($arrPlugin) {
+        $objQuery =& SC_Query_Ex::getSingletonInstance();
+		
+		$objQuery->begin();
+		try
+		{
+			// dtb_pluhinを更新します.
+			plugin_update::updateDtbPluginVersion($objQuery, $arrPlugin['plugin_id'], "v1.2.0");
+
+			$objQuery->commit();
+		}
+        catch (Exception $e)
+        {
+            $objQuery->rollback();
+        }    
+    }
+
 	/**
 	 * ディレクトリ削除
 	 */
