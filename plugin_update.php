@@ -111,16 +111,8 @@ class plugin_update{
 			// tpl移動データ
 			$mvFilePaths = array();
 			$mvFilePaths["directories"] = 
-				array(
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir,			
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s",);
+				array(HTML_REALDIR . "user_data/packages/default/img/salesranking",
+					  HTML_REALDIR . "user_data/packages/sphone/img/salesranking",);
 			$mvFilePaths[] = 
 				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p/salesranking.tpl",
 						"to" => DATA_REALDIR . "Smarty/templates/default/frontparts/bloc/salesranking.tpl",);
@@ -132,20 +124,32 @@ class plugin_update{
 						"to" => DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl",);
 			$mvFilePaths[] = 
 				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/salesranking.tpl",
-						"to" => HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
+						"to" => HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
             for ($i = 1; $i <= 5; $i++) {
 				$mvFilePaths[] = 
 					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg",
-							"to" => HTML_REALDIR . "/user_data/packages/default/img/salesranking/rank_" . $i . ".jpg",);
+							"to" => HTML_REALDIR . "user_data/packages/default/img/salesranking/rank_" . $i . ".jpg",);
 				$mvFilePaths[] = 
 					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s/rank_" . $i . ".jpg",
-							"to" => HTML_REALDIR . "/user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
+							"to" => HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
             }			
 			
 			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text)");
 			$objQuery->query("insert into dtb_salesranking_skins (name, kana_name, mv_file_paths) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . ")");
 
-			foreach ($mvFilePaths["directories"] as $dir) {
+			$mrDirPaths = array();
+			$mrDirPaths["directories"] = 
+				array(
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir,			
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s",);			
+			foreach ($mrDirPaths["directories"] as $dir) {
 				// ディレクトリ作成
 				mkdir($dir,	0755);
 			}

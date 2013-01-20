@@ -47,16 +47,8 @@ class SalesRanking extends SC_Plugin_Base {
 			// tpl移動データ
 			$mvFilePaths = array();
 			$mvFilePaths["directories"] = 
-				array(
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir,			
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p",
-					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s",);
+				array(HTML_REALDIR . "user_data/packages/default/img/salesranking",
+					  HTML_REALDIR . "user_data/packages/sphone/img/salesranking",);
 			$mvFilePaths[] = 
 				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p/salesranking.tpl",
 						"to" => DATA_REALDIR . "Smarty/templates/default/frontparts/bloc/salesranking.tpl",);
@@ -68,14 +60,14 @@ class SalesRanking extends SC_Plugin_Base {
 						"to" => DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl",);
 			$mvFilePaths[] = 
 				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/tit_bloc_salesranking.jpg",
-						"to" => HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
+						"to" => HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
             for ($i = 1; $i <= 5; $i++) {
 				$mvFilePaths[] = 
 					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg",
-							"to" => HTML_REALDIR . "/user_data/packages/default/img/salesranking/rank_" . $i . ".jpg",);
+							"to" => HTML_REALDIR . "user_data/packages/default/img/salesranking/rank_" . $i . ".jpg",);
 				$mvFilePaths[] = 
 					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s/rank_" . $i . ".jpg",
-							"to" => HTML_REALDIR . "/user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
+							"to" => HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
             }
 			
 			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text)");
@@ -101,16 +93,28 @@ class SalesRanking extends SC_Plugin_Base {
 			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/a/contents/salesranking.tpl", 	DATA_REALDIR . "Smarty/templates/admin/contents/salesranking.tpl");
 
         
-            mkdir(HTML_REALDIR . "/user_data/packages/default/img/salesranking", 0755);
-            mkdir(HTML_REALDIR . "/user_data/packages/sphone/img/salesranking", 0755);
+            mkdir(HTML_REALDIR . "user_data/packages/default/img/salesranking", 0755);
+            mkdir(HTML_REALDIR . "user_data/packages/sphone/img/salesranking", 0755);
             for ($i = 1; $i <= 5; $i++) {
-                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "/user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");
-                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "/user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg");
+                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");
+                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg");
             }
-            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg", HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
+            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg", HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
 			
 			// 1.2.0~
-			foreach ($mvFilePaths["directories"] as $dir) {
+			$mrDirPaths = array();
+			$mrDirPaths["directories"] = 
+				array(
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir,			
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s",);			
+			foreach ($mrDirPaths["directories"] as $dir) {
 				// ディレクトリ作成
 				mkdir($dir,	0755);
 			}
@@ -161,12 +165,12 @@ class SalesRanking extends SC_Plugin_Base {
         unlink(DATA_REALDIR . "Smarty/templates/admin/contents/salesranking.tpl");
 
         for ($i = 1; $i <= 5; $i++) {
-            unlink(HTML_REALDIR . "/user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");
-            unlink(HTML_REALDIR . "/user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg");
+            unlink(HTML_REALDIR . "user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");
+            unlink(HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg");
         }
-        rmdir(HTML_REALDIR . "/user_data/packages/default/img/salesranking");
-        rmdir(HTML_REALDIR . "/user_data/packages/sphone/img/salesranking");
-        unlink(HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
+        rmdir(HTML_REALDIR . "user_data/packages/default/img/salesranking");
+        rmdir(HTML_REALDIR . "user_data/packages/sphone/img/salesranking");
+        unlink(HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
 		
     }
     

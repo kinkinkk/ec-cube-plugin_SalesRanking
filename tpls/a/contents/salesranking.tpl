@@ -82,7 +82,7 @@ function lfnCheckSubmit( fm ){
         <tr>
             <th>スキン(テーマ)</th>
             <td>
-				<!--{html_options name=foo options=$lstSkins selected=$arrItem.skin_id}-->
+				<!--{html_options name=skin_id options=$lstSkins selected=$arrItem.skin_id}-->
 			</td>
 		</tr>
 		

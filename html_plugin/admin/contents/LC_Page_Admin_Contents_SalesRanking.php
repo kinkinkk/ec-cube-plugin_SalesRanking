@@ -61,6 +61,43 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
 			
 			$objFormParam->setParam($_POST);
 			$objFormParam->convParam();
+			
+			// スキン変更されたか
+			$arrItem = $this->getSalesRankingData($objQuery);			
+			if ($arrItem['skin_id'] != $_POST['skin_id']) {
+				// 削除
+				$delDatas = $objQuery->getRow("mv_file_paths", "dtb_salesranking_skins", "id = ?", array($arrItem['skin_id']));
+				$delData = unserialize($delDatas['mv_file_paths']);
+				foreach ($delData as $key => $value) {
+					if (is_numeric($key)) {
+						// ファイル削除
+						unlink($value['to']);
+					}
+				}
+				foreach ($delData["directories"] as $dir) {
+					// ディレクトリ削除
+					rmdir($dir,	0755);
+				}
+				
+				
+				unset($delDatas);
+				unset($delData);
+				
+				// 移動
+				$mvDatas = $objQuery->getRow("mv_file_paths", "dtb_salesranking_skins", "id = ?", array($_POST['skin_id']));
+				$mvData = unserialize($mvDatas['mv_file_paths']);
+				foreach ($mvData["directories"] as $dir) {
+					// ディレクトリ作成
+					mkdir($dir,	0755);
+				}
+				foreach ($mvData as $key => $value) {
+					if (is_numeric($key)) {
+						// ファイル削除
+						copy($value['from'], $value['to']);
+					}
+				}
+			}
+			
 			if ($this->updateSalesRankingData($objQuery,$objFormParam->getHashArray()))
 			{
 				$this->tpl_onload = "window.alert('更新が完了しました');";
