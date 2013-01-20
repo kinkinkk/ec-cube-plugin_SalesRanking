@@ -57,6 +57,7 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
 			$objFormParam->addParam('ランキング最大',	'max_ranking',			INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
 			$objFormParam->addParam('カテゴリ',			'category_flg',			INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
 			$objFormParam->addParam('期間表示',			'disp_date_flg',		INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
+			$objFormParam->addParam('スキン(テーマ)',	'skin_id',				INT_LEN, 'n', array('EXIST_CHECK', 'NUM_CHECK', 'MAX_LENGTH_CHECK'));
 			
 			$objFormParam->setParam($_POST);
 			$objFormParam->convParam();
@@ -72,6 +73,13 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
         $arrItem = $this->getSalesRankingData($objQuery);
 		
         $this->arrItem = $arrItem;
+		
+		// skinリストを取得
+		$skins = $objQuery->getAll("SELECT id, kana_name FROM dtb_salesranking_skins");
+		$this->lstSkins = array();
+		foreach ($skins as $skin) {
+			$this->lstSkins[$skin['id']] = $skin['kana_name'];
+		}
 		
     }
 	
@@ -127,6 +135,7 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
         $sqlval['max_ranking']			= $arrPost['max_ranking'];
         $sqlval['category_flg']			= $arrPost['category_flg'];
         $sqlval['disp_date_flg']		= $arrPost['disp_date_flg'];
+        $sqlval['skin_id']				= $arrPost['skin_id'];
 		
 		try
 		{

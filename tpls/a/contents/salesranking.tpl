@@ -80,6 +80,13 @@ function lfnCheckSubmit( fm ){
 			</td>
 		</tr>
         <tr>
+            <th>スキン(テーマ)</th>
+            <td>
+				<!--{html_options name=foo options=$lstSkins selected=$arrItem.skin_id}-->
+			</td>
+		</tr>
+		
+        <tr>
 			<td colspan="2">
 				<a class="btn-action" href="javascript:;" onclick="lfnCheckSubmit(document.form_salesranking); return false;"><span class="btn-next">この内容で更新する</span></a>
 			</td>

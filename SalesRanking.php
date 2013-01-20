@@ -42,16 +42,55 @@ class SalesRanking extends SC_Plugin_Base {
                     (10, " . $id3 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW())
             ");
 
-			// salesranking値保存用テーブル作成
-			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint, disp_date_flg smallint)");
-			$objQuery->query("insert into dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg, disp_date_flg) values (0, 1, 5, 1, 1, 5, 1, 1)");
+			// template値保存用テーブル作成 1.2.0~
+			$tplStoredDir = "default";
+			// tpl移動データ
+			$mvFilePaths = array();
+			$mvFilePaths["directories"] = 
+				array(
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir,			
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p/salesranking.tpl",
+						"to" => DATA_REALDIR . "Smarty/templates/default/frontparts/bloc/salesranking.tpl",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m/salesranking.tpl",
+						"to" => DATA_REALDIR . "Smarty/templates/mobile/frontparts/bloc/salesranking.tpl",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s/salesranking.tpl",
+						"to" => DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/tit_bloc_salesranking.jpg",
+						"to" => HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
+            for ($i = 1; $i <= 5; $i++) {
+				$mvFilePaths[] = 
+					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg",
+							"to" => HTML_REALDIR . "/user_data/packages/default/img/salesranking/rank_" . $i . ".jpg",);
+				$mvFilePaths[] = 
+					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s/rank_" . $i . ".jpg",
+							"to" => HTML_REALDIR . "/user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
+            }
+			
+			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text)");
+			$objQuery->query("insert into dtb_salesranking_skins (name, kana_name, mv_file_paths) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . "')");
 
+			// salesranking値保存用テーブル作成 1.1.0~
+			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint, disp_date_flg smallint, skin_id smallint)");
+			$objQuery->query("insert into dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg, disp_date_flg, skin_id) values (0, 1, 5, 1, 1, 5, 1, 1, (SELECT id FROM dtb_salesranking_skins WHERE name ='" . $tplStoredDir . "'))");
+			
             // ロゴファイルをhtmlディレクトリにコピーします.
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/logo.png", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/logo.png");
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/SalesRankingPage.php", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/SalesRankingPage.php");
-            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/frontparts_bloc", 0755);
-            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/admin", 0755);
-            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/admin/contents", 0755);
+            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/frontparts_bloc",	0755);
+            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/admin",				0755);
+            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/admin/contents",		0755);
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/frontparts_bloc/SalesRankingBloc.php", 					PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/frontparts_bloc/SalesRankingBloc.php");
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/admin/contents/SalesRankingSetting.php", 				PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/admin/contents/SalesRankingSetting.php");
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/admin/contents/LC_Page_Admin_Contents_SalesRanking.php", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/admin/contents/LC_Page_Admin_Contents_SalesRanking.php");
@@ -68,8 +107,21 @@ class SalesRanking extends SC_Plugin_Base {
                 copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "/user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");
                 copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "/user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg");
             }
-        
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg", HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
+			
+			// 1.2.0~
+			foreach ($mvFilePaths["directories"] as $dir) {
+				// ディレクトリ作成
+				mkdir($dir,	0755);
+			}
+			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/p/salesranking.tpl",			PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p/salesranking.tpl");
+			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/m/salesranking.tpl",			PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m/salesranking.tpl");
+			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/s/salesranking.tpl",			PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s/salesranking.tpl");
+            for ($i = 1; $i <= 5; $i++) {
+                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg",		PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg");
+                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg",		PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s/rank_" . $i . ".jpg");
+            }
+            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg",	PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/tit_bloc_salesranking.jpg");
 			
 			
             $objQuery->commit();
@@ -94,11 +146,12 @@ class SalesRanking extends SC_Plugin_Base {
         // dtb_blocから不要なカラムを削除します.
     	$objQuery =& SC_Query_Ex::getSingletonInstance();
         $objQuery->begin();		
-
+		
 		// salesranking値保存用テーブル削除
 		$objQuery->query("DELETE FROM dtb_blocposition WHERE bloc_id IN (SELECT bloc_id FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId . ")");
 		$objQuery->query("DELETE FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId);
 		$objQuery->query("DROP TABLE IF EXISTS dtb_salesranking");
+		$objQuery->query("DROP TABLE IF EXISTS dtb_salesranking_skins");
         $objQuery->commit();
 
 		

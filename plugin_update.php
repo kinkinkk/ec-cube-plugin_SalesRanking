@@ -106,6 +106,61 @@ class plugin_update{
 			// dtb_pluhinを更新します.
 			plugin_update::updateDtbPluginVersion($objQuery, $arrPlugin['plugin_id'], "v1.2.0");
 
+			// template値保存用テーブル作成 1.2.0~
+			$tplStoredDir = "default";
+			// tpl移動データ
+			$mvFilePaths = array();
+			$mvFilePaths["directories"] = 
+				array(
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir,			
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p",
+					PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p/salesranking.tpl",
+						"to" => DATA_REALDIR . "Smarty/templates/default/frontparts/bloc/salesranking.tpl",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m/salesranking.tpl",
+						"to" => DATA_REALDIR . "Smarty/templates/mobile/frontparts/bloc/salesranking.tpl",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s/salesranking.tpl",
+						"to" => DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl",);
+			$mvFilePaths[] = 
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/salesranking.tpl",
+						"to" => HTML_REALDIR . "/user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
+            for ($i = 1; $i <= 5; $i++) {
+				$mvFilePaths[] = 
+					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg",
+							"to" => HTML_REALDIR . "/user_data/packages/default/img/salesranking/rank_" . $i . ".jpg",);
+				$mvFilePaths[] = 
+					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s/rank_" . $i . ".jpg",
+							"to" => HTML_REALDIR . "/user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
+            }			
+			
+			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text)");
+			$objQuery->query("insert into dtb_salesranking_skins (name, kana_name, mv_file_paths) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . ")");
+
+			foreach ($mvFilePaths["directories"] as $dir) {
+				// ディレクトリ作成
+				mkdir($dir,	0755);
+			}
+			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/p/salesranking.tpl",			PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/p/salesranking.tpl");
+			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/m/salesranking.tpl",			PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/m/salesranking.tpl");
+			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/s/salesranking.tpl",			PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s/salesranking.tpl");
+            for ($i = 1; $i <= 5; $i++) {
+                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg",		PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg");
+                copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg",		PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s/rank_" . $i . ".jpg");
+            }
+            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg",	PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/tit_bloc_salesranking.jpg");
+
+			$objQuery->query("ALTER TABLE dtb_salesranking ADD (skin_id smallint)");
+			$objQuery->query("update dtb_salesranking set skin_id = (SELECT id FROM dtb_salesranking_skin_id WHERE name ='" . $tplStoredDir . "')");
+			
 			$objQuery->commit();
 		}
         catch (Exception $e)
