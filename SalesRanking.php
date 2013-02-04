@@ -34,13 +34,11 @@ class SalesRanking extends SC_Plugin_Base {
 			$id2 = $objQuery->nextVal('dtb_bloc_bloc_id');
 			$id3 = $objQuery->nextVal('dtb_bloc_bloc_id');
 			
-            $objQuery->query("
-                INSERT INTO dtb_bloc 
-                    (device_type_id, bloc_id, bloc_name, tpl_path, filename, php_path, deletable_flg, plugin_id, create_date, update_date) VALUES 
-                    (1,  " . $id1 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW()),
-                    (2,  " . $id2 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW()),
-                    (10, " . $id3 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW())
-            ");
+			$insertIntoDtbBloc = "INSERT INTO dtb_bloc (device_type_id, bloc_id, bloc_name, tpl_path, filename, php_path, deletable_flg, plugin_id, create_date, update_date) VALUES ";
+			
+            $objQuery->query($insertIntoDtbBloc . "(1,  " . $id1 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW())");
+            $objQuery->query($insertIntoDtbBloc . "(2,  " . $id2 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW())");
+            $objQuery->query($insertIntoDtbBloc . "(10, " . $id3 . ", '週間売筋ランキング', 'salesranking.tpl', 'salesranking', '" . $queStrDir . "SalesRankingPage.php',  1, " . $queSelPluginId . ", NOW(), NOW())");
 
 			// template値保存用テーブル作成 1.2.0~
 			$tplStoredDir = "default";
@@ -71,11 +69,11 @@ class SalesRanking extends SC_Plugin_Base {
             }
 			
 			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text)");
-			$objQuery->query("insert into dtb_salesranking_skins (name, kana_name, mv_file_paths) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . "')");
+			$objQuery->query("INSERT INTO dtb_salesranking_skins (name, kana_name, mv_file_paths) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . "')");
 
 			// salesranking値保存用テーブル作成 1.1.0~
 			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint, disp_date_flg smallint, skin_id smallint)");
-			$objQuery->query("insert into dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg, disp_date_flg, skin_id) values (0, 1, 5, 1, 1, 5, 1, 1, (SELECT id FROM dtb_salesranking_skins WHERE name ='" . $tplStoredDir . "'))");
+			$objQuery->query("INSERT INTO dtb_salesranking  (start_interval, summary_week, score_mark_status, score_mark_date, score_mark_point, max_ranking, category_flg, disp_date_flg, skin_id) VALUES (0, 1, 5, 1, 1, 5, 1, 1, (SELECT id FROM dtb_salesranking_skins WHERE name ='" . $tplStoredDir . "'))");
 			
             // ロゴファイルをhtmlディレクトリにコピーします.
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/logo.png", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/logo.png");
@@ -133,7 +131,7 @@ class SalesRanking extends SC_Plugin_Base {
         catch (Exception $e)
         {
             $objQuery->rollback();
-			$objQuery->query("UPDATE dtb_plugin SET plugin_description = 'エラーが発生した為、不完全な状態です。削除（アンインストール）してください！' WHERE plugin_id=" . $queSelPluginId);
+			//$objQuery->query("UPDATE dtb_plugin SET plugin_description = 'エラーが発生した為、不完全な状態です。削除（アンインストール）してください！' WHERE plugin_id=" . $queSelPluginId);
 			throw $e;
         }
         
@@ -149,13 +147,19 @@ class SalesRanking extends SC_Plugin_Base {
     	
         // dtb_blocから不要なカラムを削除します.
     	$objQuery =& SC_Query_Ex::getSingletonInstance();
-        $objQuery->begin();		
 		
+		$dbFactory = SC_DB_DBFactory::getInstance();
+		
+		$dropTableList = $dbFactory->findTableNames("dtb_salesranking");
+
+		$objQuery->begin();		
 		// salesranking値保存用テーブル削除
 		$objQuery->query("DELETE FROM dtb_blocposition WHERE bloc_id IN (SELECT bloc_id FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId . ")");
 		$objQuery->query("DELETE FROM dtb_bloc WHERE plugin_id = ". $queSelPluginId);
-		$objQuery->query("DROP TABLE IF EXISTS dtb_salesranking");
-		$objQuery->query("DROP TABLE IF EXISTS dtb_salesranking_skins");
+		
+		foreach ($dropTableList as $dropTable) {
+			$objQuery->query("DROP TABLE " . $dropTable);
+		}
         $objQuery->commit();
 
 		
