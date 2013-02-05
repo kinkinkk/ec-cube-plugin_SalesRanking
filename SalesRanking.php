@@ -68,8 +68,8 @@ class SalesRanking extends SC_Plugin_Base {
 							"to" => HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
             }
 			
-			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text)");
-			$objQuery->query("INSERT INTO dtb_salesranking_skins (name, kana_name, mv_file_paths) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . "')");
+			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text, active_flag VARCHAR(1))");
+			$objQuery->query("INSERT INTO dtb_salesranking_skins (name, kana_name, mv_file_paths, active_flag) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . "', '1')");
 
 			// salesranking値保存用テーブル作成 1.1.0~
 			$objQuery->query("CREATE TABLE dtb_salesranking (start_interval smallint, summary_week smallint, score_mark_status smallint, score_mark_date smallint, score_mark_point smallint, max_ranking smallint, category_flg smallint, disp_date_flg smallint, skin_id smallint)");

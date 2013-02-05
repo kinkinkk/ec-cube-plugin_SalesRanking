@@ -112,7 +112,7 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
         $this->arrItem = $arrItem;
 		
 		// skinリストを取得
-		$skins = $objQuery->getAll("SELECT id, kana_name FROM dtb_salesranking_skins");
+		$skins = $objQuery->getAll("SELECT id, kana_name FROM dtb_salesranking_skins WHERE active_flag = '1'");
 		$this->lstSkins = array();
 		foreach ($skins as $skin) {
 			$this->lstSkins[$skin['id']] = $skin['kana_name'];
