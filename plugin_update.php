@@ -16,6 +16,7 @@ class plugin_update{
      * @return void
      */
     function update($arrPlugin) {
+		/*
         // バージョン1.0.1からのアップデート
         if($arrPlugin['plugin_version'] == "v1.0.1"){
            plugin_update::update101($arrPlugin);
@@ -25,6 +26,8 @@ class plugin_update{
         elseif ($arrPlugin['plugin_version'] == "v1.1.0") {
            plugin_update::update110($arrPlugin);
         }
+		 * */
+		// update対応なし
     }
     
     /**
@@ -66,6 +69,7 @@ class plugin_update{
 			copy(DOWNLOADS_TEMP_PLUGIN_UPDATE_DIR . "tpls/p/salesranking.tpl",												PLUGIN_UPLOAD_REALDIR	. $arrPlugin['plugin_code'] . "/tpls/p/salesranking.tpl");
 			copy(DOWNLOADS_TEMP_PLUGIN_UPDATE_DIR . "tpls/m/salesranking.tpl",												PLUGIN_UPLOAD_REALDIR	. $arrPlugin['plugin_code'] . "/tpls/m/salesranking.tpl");
 			copy(DOWNLOADS_TEMP_PLUGIN_UPDATE_DIR . "tpls/s/salesranking.tpl",												PLUGIN_UPLOAD_REALDIR	. $arrPlugin['plugin_code'] . "/tpls/s/salesranking.tpl");
+			copy(DOWNLOADS_TEMP_PLUGIN_UPDATE_DIR . "tpls/a/contents/salesranking.tpl",										PLUGIN_UPLOAD_REALDIR	. $arrPlugin['plugin_code'] . "/tpls/a/contents/salesranking.tpl");
 			
 			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/frontparts_bloc/SalesRankingBloc.php",					PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/frontparts_bloc/SalesRankingBloc.php");
 			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/admin/contents/SalesRankingSetting.php", 				PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/admin/contents/SalesRankingSetting.php");
@@ -123,8 +127,8 @@ class plugin_update{
 				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/tpls/s/salesranking.tpl",
 						"to" => DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl",);
 			$mvFilePaths[] = 
-				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/salesranking.tpl",
-						"to" => HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
+				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/tit_bloc_salesranking.jpg",
+						"to" => HTML_REALDIR . "user_data/packages/default/img/salesranking/tit_bloc_salesranking.jpg",);
             for ($i = 1; $i <= 5; $i++) {
 				$mvFilePaths[] = 
 					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg",
@@ -132,10 +136,10 @@ class plugin_update{
 				$mvFilePaths[] = 
 					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/s/rank_" . $i . ".jpg",
 							"to" => HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg",);
-            }			
+            }
 			
-			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text)");
-			$objQuery->query("insert into dtb_salesranking_skins (name, kana_name, mv_file_paths) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . ")");
+			$objQuery->query("CREATE TABLE dtb_salesranking_skins (id serial primary key, name VARCHAR(1024), kana_name VARCHAR(2048), mv_file_paths text, active_flag VARCHAR(1))");
+			$objQuery->query("INSERT INTO dtb_salesranking_skins (name, kana_name, mv_file_paths, active_flag) VALUES ('" . $tplStoredDir . "', 'デフォルト', '" . serialize($mvFilePaths) . "', '1')");
 
 			$mrDirPaths = array();
 			$mrDirPaths["directories"] = 
@@ -162,8 +166,10 @@ class plugin_update{
             }
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg",	PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/tit_bloc_salesranking.jpg");
 
-			$objQuery->query("ALTER TABLE dtb_salesranking ADD (skin_id smallint)");
-			$objQuery->query("update dtb_salesranking set skin_id = (SELECT id FROM dtb_salesranking_skin_id WHERE name ='" . $tplStoredDir . "')");
+			rename(HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg", HTML_REALDIR . "user_data/packages/default/img/salesranking/tit_bloc_salesranking.jpg");
+			
+			$objQuery->query("ALTER TABLE dtb_salesranking ADD COLUMN skin_id smallint");
+			$objQuery->query("update dtb_salesranking set skin_id = (SELECT id FROM dtb_salesranking_skins WHERE name ='" . $tplStoredDir . "')");
 			
 			$objQuery->commit();
 		}

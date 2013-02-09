@@ -218,7 +218,7 @@
     </style>  
     <div class="block_outer clearfix">
         <div id="salesranking_area">
-            <h2><img src="<!--{$TPL_URLPATH}-->img/title/tit_bloc_salesranking.jpg" alt="*" class="title_icon" /></h2>
+            <h2><img src="<!--{$TPL_URLPATH}-->img/salesranking/tit_bloc_salesranking.jpg" alt="*" class="title_icon" /></h2>
             <div class="block_body clearfix">
                 <!--{foreach from=$arrRankingItems item="arrProduct" name="sales_rankings"}-->
                     <div class="salesranking_product_item">

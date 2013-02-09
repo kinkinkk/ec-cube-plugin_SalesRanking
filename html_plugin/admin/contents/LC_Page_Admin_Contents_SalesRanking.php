@@ -75,8 +75,10 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
 					}
 				}
 				foreach ($delData["directories"] as $dir) {
-					// ディレクトリ削除
-					rmdir($dir,	0755);
+					if (is_dir($dir)) {
+						// ディレクトリ削除
+						rmdir($dir);
+					}
 				}
 				
 				
@@ -87,8 +89,10 @@ class LC_Page_Admin_Contents_SalesRanking extends LC_Page_Admin_Ex {
 				$mvDatas = $objQuery->getRow("mv_file_paths", "dtb_salesranking_skins", "id = ?", array($_POST['skin_id']));
 				$mvData = unserialize($mvDatas['mv_file_paths']);
 				foreach ($mvData["directories"] as $dir) {
-					// ディレクトリ作成
-					mkdir($dir,	0755);
+					if (!is_dir($dir)) {
+						// ディレクトリ作成
+						mkdir($dir,	0755);
+					}
 				}
 				foreach ($mvData as $key => $value) {
 					if (is_numeric($key)) {

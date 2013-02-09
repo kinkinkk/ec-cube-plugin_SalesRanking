@@ -58,7 +58,7 @@ class SalesRanking extends SC_Plugin_Base {
 						"to" => DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl",);
 			$mvFilePaths[] = 
 				array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/tit_bloc_salesranking.jpg",
-						"to" => HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg",);
+						"to" => HTML_REALDIR . "user_data/packages/default/img/salesranking/tit_bloc_salesranking.jpg",);
             for ($i = 1; $i <= 5; $i++) {
 				$mvFilePaths[] = 
 					array("from" => PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/skins/" . $tplStoredDir . "/imgs/p/rank_" . $i . ".jpg",
@@ -97,7 +97,7 @@ class SalesRanking extends SC_Plugin_Base {
                 copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");
                 copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/rank_" . $i . ".jpg", HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg");
             }
-            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg", HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
+            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/images/tit_bloc_salesranking.jpg", HTML_REALDIR . "user_data/packages/default/img/salesranking/tit_bloc_salesranking.jpg");
 			
 			// 1.2.0~
 			$mrDirPaths = array();
@@ -174,7 +174,7 @@ class SalesRanking extends SC_Plugin_Base {
         }
         rmdir(HTML_REALDIR . "user_data/packages/default/img/salesranking");
         rmdir(HTML_REALDIR . "user_data/packages/sphone/img/salesranking");
-        unlink(HTML_REALDIR . "user_data/packages/default/img/title/tit_bloc_salesranking.jpg");
+        unlink(HTML_REALDIR . "user_data/packages/default/img/salesranking/tit_bloc_salesranking.jpg");
 		
     }
     
