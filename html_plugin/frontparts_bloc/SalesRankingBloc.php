@@ -116,13 +116,13 @@ FROM
 				WHERE
 						DD.del_flg = 0
 					AND
-						DD.status = $scoreMarkStatus
+						DD.status = ?
 					AND
 						DD.$scoreMarkDate 
 						BETWEEN 
-							'$interval7' 
+							? 
 						AND 
-							'$interval0' 
+							?  
 					$scoreMarkPoint
 			) AS OG
 		GROUP BY 
@@ -149,10 +149,10 @@ INNER JOIN
 	ON
 		PR.product_id = GR.product_id
 ORDER BY GR.summary DESC
-LIMIT $maxRanking
+LIMIT ?
 __EOS__;
         
-        $arrRankingItems = $objQuery->getAll($str);
+        $arrRankingItems = $objQuery->getAll($str, array($scoreMarkStatus, $interval7, $interval0, $maxRanking));
 		$objProduct->setIncTaxToProducts($arrRankingItems);
         
         
@@ -177,23 +177,23 @@ FROM
 		WHERE
 				DD.del_flg = 0
 			AND
-				DD.status = $scoreMarkStatus
+				DD.status = ?
 			AND
 				DD.$scoreMarkDate 
 				BETWEEN 
-					'$interval14' 
+					? 
 				AND 
-					'$interval7' 
+					? 
 			$scoreMarkPoint
 	) AS OG
 GROUP BY 
 	OG.product_id
 ) GR
 ORDER BY GR.summary DESC
-LIMIT $maxRanking
+LIMIT ?
 __EOS__;
         
-        $arrRankingItems2 = $objQuery->getAll($str2);        
+        $arrRankingItems2 = $objQuery->getAll($str2, array($scoreMarkStatus, $interval14, $interval7, $maxRanking));        
         
         $beforeRank = 1;
         foreach ($arrRankingItems2 as $arrRankingItem2)
