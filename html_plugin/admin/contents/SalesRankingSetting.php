@@ -1,7 +1,8 @@
 <?php
-
+require_once '../../../../../data/config/config.php';
 // {{{ requires
-require_once '../../../../admin/require.php';
+require_once '../../../../' . ADMIN_DIR .'require.php';
+
 require_once './LC_Page_Admin_Contents_SalesRanking.php';
 
 // }}}
