@@ -79,12 +79,12 @@ class SalesRanking extends SC_Plugin_Base {
             // ロゴファイルをhtmlディレクトリにコピーします.
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/logo.png", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/logo.png");
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/SalesRankingPage.php", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/SalesRankingPage.php");
-            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/frontparts_bloc",			0755);
-            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/" . ADMIN_DIR,				0755);
-            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/" . ADMIN_DIR. "contents",	0755);
+            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/frontparts_bloc",	0755);
+            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/admin",				0755);
+            mkdir(PLUGIN_HTML_REALDIR .  $arrPlugin['plugin_code'] . "/admin/contents",		0755);
             copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/frontparts_bloc/SalesRankingBloc.php", 					PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/frontparts_bloc/SalesRankingBloc.php");
-            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/admin/contents/SalesRankingSetting.php", 				PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/" . ADMIN_DIR. "contents/SalesRankingSetting.php");
-            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/admin/contents/LC_Page_Admin_Contents_SalesRanking.php", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/" . ADMIN_DIR. "contents/LC_Page_Admin_Contents_SalesRanking.php");
+            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/admin/contents/SalesRankingSetting.php", 				HTML_REALDIR . "/" . ADMIN_DIR. "contents/SalesRankingSetting.php");
+            copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/html_plugin/admin/contents/LC_Page_Admin_Contents_SalesRanking.php", PLUGIN_HTML_REALDIR . $arrPlugin['plugin_code'] . "/admin/contents/LC_Page_Admin_Contents_SalesRanking.php");
 
 			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/p/salesranking.tpl", 			DATA_REALDIR . "Smarty/templates/default/frontparts/bloc/salesranking.tpl");
 			copy(PLUGIN_UPLOAD_REALDIR . $arrPlugin['plugin_code'] . "/tpls/m/salesranking.tpl", 			DATA_REALDIR . "Smarty/templates/mobile/frontparts/bloc/salesranking.tpl");
@@ -168,6 +168,8 @@ class SalesRanking extends SC_Plugin_Base {
         unlink(DATA_REALDIR . "Smarty/templates/mobile/frontparts/bloc/salesranking.tpl");
         unlink(DATA_REALDIR . "Smarty/templates/sphone/frontparts/bloc/salesranking.tpl");
         unlink(DATA_REALDIR . "Smarty/templates/admin/contents/salesranking.tpl");
+
+        unlink(HTML_REALDIR . "/" . ADMIN_DIR. "contents/SalesRankingSetting.php");
 
         for ($i = 1; $i <= 5; $i++) {
             unlink(HTML_REALDIR . "user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");

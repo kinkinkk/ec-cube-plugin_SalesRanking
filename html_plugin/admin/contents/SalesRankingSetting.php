@@ -1,9 +1,8 @@
 <?php
-require_once '../../../../../data/config/config.php';
 // {{{ requires
-require_once '../../../../' . ADMIN_DIR .'require.php';
+require_once '../require.php';
 
-require_once './LC_Page_Admin_Contents_SalesRanking.php';
+require_once PLUGIN_HTML_REALDIR . '/SalesRankingKNZTK/admin/contents/LC_Page_Admin_Contents_SalesRanking.php';
 
 // }}}
 // {{{ generate page
