@@ -175,9 +175,9 @@ class SalesRanking extends SC_Plugin_Base {
             unlink(HTML_REALDIR . "user_data/packages/default/img/salesranking/rank_" . $i . ".jpg");
             unlink(HTML_REALDIR . "user_data/packages/sphone/img/salesranking/rank_" . $i . ".jpg");
         }
+        unlink(HTML_REALDIR . "user_data/packages/default/img/salesranking/tit_bloc_salesranking.jpg");
         rmdir(HTML_REALDIR . "user_data/packages/default/img/salesranking");
         rmdir(HTML_REALDIR . "user_data/packages/sphone/img/salesranking");
-        unlink(HTML_REALDIR . "user_data/packages/default/img/salesranking/tit_bloc_salesranking.jpg");
 		
     }
     
